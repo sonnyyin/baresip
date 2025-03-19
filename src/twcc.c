@@ -68,6 +68,7 @@ static inline void append_delay(struct twcc_status *twccst,
 		mbuf_write_u16(twccst->msg.deltas, htons(p->delta));
 		break;
 	default:
+		break;
 	}
 }
 
