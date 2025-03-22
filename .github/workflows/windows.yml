@@ -79,14 +79,14 @@ jobs:
         run: |
           build\test\selftest.exe
           
-      - name: Archive the build artifacts
-        run: |
-          mkdir -p artifacts/${{ matrix.config.os }}-${{ matrix.config.name }}
-          cp -r build/* artifacts/${{ matrix.config.os }}-${{ matrix.config.name }}/      
+      #- name: Archive the build artifacts
+      #  run: |
+      #    mkdir -p artifacts/${{ matrix.config.os }}-${{ matrix.config.name }}
+      #    cp -r build/* artifacts/${{ matrix.config.os }}-${{ matrix.config.name }}/      
           
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: baresip-${{ matrix.config.os }}-${{ matrix.config.name }}
-          path: artifacts/${{ matrix.config.os }}-${{ matrix.config.name }}/
+          path: build\
           if-no-files-found: error
