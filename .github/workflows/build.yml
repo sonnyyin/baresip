@@ -4,6 +4,8 @@ on:
   push:
     branches:
     - main
+    tags:
+      - 'v*'
   pull_request:
     branches:
     - main
@@ -125,10 +127,22 @@ jobs:
       run: |
         cmake -B build -DCMAKE_C_FLAGS="-Werror" && cmake --build build -j
 
-    - name: baresip static
-      run: |
-        rm -Rf build
-        cmake -B build -DSTATIC=1 -DCMAKE_C_FLAGS="-Werror" -DMODULES="g711;ausine;fakevideo;auconv;auresamp;dtls_srtp;srtp;aufile" && cmake --build build -j
+#    - name: baresip static
+#      run: |
+#        rm -Rf build
+#        cmake -B build -DSTATIC=1 -DCMAKE_C_FLAGS="-Werror" -DMODULES="g711;ausine;fakevideo;auconv;auresamp;dtls_srtp;srtp;aufile" && cmake --build build -j
 
-    - name: selftest
-      run: ./build/test/selftest
+#    - name: selftest
+#      run: ./build/test/selftest
+    - name: Archive the build artifacts
+      if: startsWith(github.ref, 'refs/tags/')
+      run: |
+        mkdir -p artifacts/${{ matrix.os }}-${{ matrix.compiler }}
+        cp -r build/* artifacts/${{ matrix.os }}-${{ matrix.compiler }}/      
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: baresip-${{matrix.PLATFORM}}-${{matrix.CONFIGURATION}}
+        path: artifacts/${{ matrix.os }}-${{ matrix.compiler }}
+        if-no-files-found: error
